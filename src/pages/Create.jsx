@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Container, Row, Col, Button } from "reactstrap";
 import CommonSection from "../components/ui/Common-section/CommonSection";
 import NftCard from "../components/ui/Nft-card/NftCard";
-import img from "../assets/images/img-01.jpg";
+// import img from "../assets/images/img-01.jpg";
 import avatar from "../assets/images/ava-01.png";
 import { NFT__DATA } from "../assets/data/data";
 // import { create } from "ipfs-http-client";
@@ -32,15 +32,15 @@ const Create = () => {
     const [royalty, setRoyal] = useState("");
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
-
+    const [selectedImage, setSelectedImage] = useState(null);
     var x = NFT__DATA.lastIndexOf();
-    var flag = 0;
+    // var flag = 0;
 
     var item = {
         id: x + 2,
         title: title,
         desc: desc,
-        imgUrl: img,
+        imgUrl: (selectedImage) ? URL.createObjectURL(selectedImage) : "" ,
         creator: "Your Name",
         creatorImg: avatar,
         currentBid: 0,
@@ -70,7 +70,11 @@ const Create = () => {
                                         <label htmlFor="">Upload File</label>
                                         <input
                                             type="file"
+                                            accept="image/*"
                                             className="upload__input"
+                                            onChange={(event) => {
+                                                setSelectedImage(event.target.files[0]);
+                                            }}
                                         />
                                     </div>
 
@@ -110,20 +114,37 @@ const Create = () => {
                                             />
                                         </div>
                                     </div>
+                                    <div className=" desc-flex align-items-center gap-4">
+                                        <div className="form__input w-50">
+                                            <label htmlFor="">
+                                                Split royalties
+                                            </label>
+                                            <input type="text" />
+                                        </div>
+
+                                        <div className="form__input">
+                                          <Button outline color="primary">
+                                            <label2 htmlFor="">
+                                              Add
+                                            </label2>
+                                          </Button>
+                                        </div>
+                                    </div>
 
                                     <div className=" desc-flex align-items-center gap-4">
                                         <div className="form__input w-50">
                                             <label htmlFor="">
-                                                Starting Date
+                                                Exclusion List 
                                             </label>
-                                            <input type="date" />
+                                            <input type="text" />
                                         </div>
 
-                                        <div className="form__input w-50">
-                                            <label htmlFor="">
-                                                Expiration Date
-                                            </label>
-                                            <input type="date" />
+                                        <div className="form__input">
+                                          <Button outline color="primary">
+                                            <label2 htmlFor="">
+                                              Add
+                                            </label2>
+                                          </Button>
                                         </div>
                                     </div>
 
@@ -154,8 +175,8 @@ const Create = () => {
                                         ></textarea>
                                     </div>
                                     <div className="form__input">
-                                        <Button onClick={append}>
-                                            <label htmlFor="">Mint NFT</label>
+                                        <Button outline color="primary" onClick={append}>
+                                            <label2 htmlFor="">Mint NFT</label2>
                                         </Button>
                                     </div>
                                 </form>

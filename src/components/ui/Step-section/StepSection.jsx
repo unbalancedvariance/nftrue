@@ -1,9 +1,23 @@
-import React from "react";
+import React, { useState , useEffect} from "react";
 import { Container, Row, Col } from "reactstrap";
 import { Link } from "react-router-dom";
-
+import { useAnimation, motion } from "framer-motion/dist/es/index";
+import { useInView } from "react-intersection-observer";
 import "./step-section.css";
 
+const nftcardvariant={
+  hidden: {
+      opacity: 0,
+      y : +50
+  },
+  visible: {
+      opacity: 1,
+      y:0,
+      transition: {
+          duration: 1
+      },
+  }
+}
 const STEP__DATA = [
   {
     title: "Setup your wallet",
@@ -31,6 +45,14 @@ const STEP__DATA = [
 ];
 
 const StepSection = () => {
+  const controls = useAnimation();
+  const [ref, inView] = useInView();
+  useEffect(() => {
+      if (inView) {
+      controls.start("visible");
+      }
+  }, [controls, inView]);
+
   return (
     <section>
       <Container>
@@ -41,7 +63,12 @@ const StepSection = () => {
 
           {STEP__DATA.map((item, index) => (
             <Col lg="3" md="4" sm="6" key={index} className="mb-4">
-              <div className="single__step__item">
+              <motion.div className="single__step__item"
+              variants={nftcardvariant} 
+              ref={ref}
+              animate={controls}
+              initial="hidden"
+              >
                 <span>
                   <i class={item.icon}></i>
                 </span>
@@ -51,7 +78,7 @@ const StepSection = () => {
                   </h5>
                   <p className="mb-0">{item.desc}</p>
                 </div>
-              </div>
+              </motion.div>
             </Col>
           ))}
         </Row>

@@ -59,7 +59,11 @@ contract MarketPlace is ReentrancyGuard {
     ) external nonReentrant {
         require(_price > 0, "Price must be greater than 0");
         itemCount++;
+        NFT nft_tobeCreated = NFT(address(_nft));
+        nft_tobeCreated.approve(msg.sender,_tokenId);
+        // require(msg.sender == nft_tobeCreated.currentOwner(),"Wrong Owner");
         _nft.transferFrom(msg.sender, address(this), _tokenId);
+        nft_tobeCreated.setOwner(payable(msg.sender));
 
         items[itemCount] = Item(
             itemCount,
@@ -71,60 +75,61 @@ contract MarketPlace is ReentrancyGuard {
         );
 
         emit Offered(itemCount, address(_nft), _tokenId, _price, msg.sender);
-        nft_created[msg.sender].push(address(_nft));
+        nft_created[nft_tobeCreated.currentOwner()].push(address(_nft));
     }
-
-    uint public royalty;
 
     function purchaseItem(uint _itemId) external payable nonReentrant {
         uint totalPrice = gettotalPrice(_itemId);
         Item storage item = items[_itemId];
         require(_itemId > 0 && _itemId <= itemCount, "Item does not exist");
         require(msg.value >= totalPrice, "Money where");
-        require(!item.sold,"Item not for sale");
+        require(!item.sold, "Item not for sale");
 
         // Transfer the nft ownership
         // Converting the interger value into bytes and the bytes value will be converted back to integer to calculate the transaction amount.
         address nftAddress = address(item.nft);
         NFT nft_token = NFT(nftAddress);
 
-        address payable creator = nft_token.artist();
-        uint royalitypercentage = nft_token.royalitypercentage();
+        uint number_of_artist = nft_token.getLength();
 
-        royalty = (item.price * royalitypercentage)/100;
+        uint royalitypercentage = nft_token.royalitypercentage();
+        uint royalty = ((item.price * royalitypercentage) / 100);
+
+        for (uint i = 0; i < number_of_artist; i++) {
+            address payable creator = nft_token.getArtist_i(i);
+            creator.transfer(royalty / number_of_artist);
+        }
+
         uint fees = totalPrice - item.price;
         item.price = item.price - royalty;
-        creator.transfer(royalty);
         item.seller.transfer(item.price);
         feeAccount.transfer(fees);
-        item.sold = true;   
+        item.sold = true;
         uint price = msg.value - totalPrice;
         payable(msg.sender).transfer(price);
+        console.log(nft_token.currentOwner());
         item.nft.safeTransferFrom(address(this), msg.sender, item.tokenId);
-
         emit Bought(
             _itemId,
             address(item.nft),
             item.tokenId,
             item.price,
-            item.seller,
+            nft_token.currentOwner(),
             msg.sender
         );
-
+        nft_token.setOwner(payable(msg.sender));
         nft_owned[msg.sender].push(address(item.nft));
-
     }
 
     function gettotalPrice(uint _itemId) public view returns (uint) {
         return (items[_itemId].price * (100 + feePercent)) / 100;
     }
 
-    function getAllCreatedNFTs() public view returns(address[] memory){
+    function getAllCreatedNFTs() public view returns (address[] memory) {
         return nft_created[msg.sender];
     }
 
-    
-    function getAllOwnedNFTs() public view returns(address[] memory){
+    function getAllOwnedNFTs() public view returns (address[] memory) {
         return nft_owned[msg.sender];
     }
 }

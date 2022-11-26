@@ -44,9 +44,6 @@ const Profile = (props) => {
   return (
     <>
       <CommonSection title={"Profile"} />
-        <section>
-            <h1>user name: {user}</h1>
-        </section>
       <section>
       
         <Container>

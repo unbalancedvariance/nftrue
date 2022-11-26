@@ -20,6 +20,11 @@
   margin-bottom: 10px;
 }
 
+.form__input label2 {
+  color: #fff;
+  text-align: center;
+}
+
 .form__input .upload__input {
   padding: 40px 25px;
 }

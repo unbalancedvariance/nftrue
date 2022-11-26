@@ -7,7 +7,7 @@ import "./hero-section.css";
 import { Canvas } from "@react-three/fiber";
 // import CanvasResize from "react-canvas-resize";
 import { Suspense } from "react";
-import { Environment, OrbitControls } from "@react-three/drei";
+import { Center, Environment, OrbitControls } from "@react-three/drei";
 import { useGLTF, OrthographicCamera } from '@react-three/drei'
 
 const textpopvariant={
@@ -50,8 +50,8 @@ const HeroSection = () => {
     
     <section className="hero__section">
       <Container>
-        <div class="row">
-          <div class = "col-lg-6">
+        <div class="row form-group">
+          <div class = "col-lg-7">
             <motion.div className="hero__content"
             variants={textpopvariant} 
             ref={ref}
@@ -78,7 +78,7 @@ const HeroSection = () => {
               </div>
             </motion.div>
           </div>
-          <div class = "col-xl-6">
+          <div class = "col-lg-3 d-flex">
             <motion.div
             variants={cubepopvariant} 
             ref={ref}
@@ -101,8 +101,8 @@ const HeroSection = () => {
             <OrbitControls autoRotate autoRotateSpeed={3}/>
             </Canvas>
             </motion.div>
-            </div>
           </div>
+        </div>
       </Container>
     </section>
   );

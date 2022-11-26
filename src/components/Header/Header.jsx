@@ -1,7 +1,7 @@
 import React, { useRef, useEffect,useState } from "react";
 import "./header.css";
 import { Container } from "reactstrap";
-import logoimg from "../../assets/images/logoflat.png";
+import logoimg from "../../assets/images/logo.png";
 import { NavLink, Link } from "react-router-dom";
 
 const NAV__LINKS = [
